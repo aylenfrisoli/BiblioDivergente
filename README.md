@@ -60,8 +60,13 @@ Para cada libro devolvé un objeto con exactamente estas claves:
 Devolvé EXCLUSIVAMENTE un JSON válido con esta forma exacta:
 {"books":[{"title":"...","author":"...","year":"...","why":"...","fit":"..."}]}
 
+---
+
 ## Reflexión Final: La IA como acelerador
 
 Lo que descubrí sobre mi potencial creativo durante este mes es que **la IA no reemplazó mis decisiones, las aceleró**. 
 
 Al apoyarme en herramientas generativas para el código y la estructura, pude dirigir toda mi energía a lo que más me importa como desarrolladora: **pensar en el usuario real**. Logré construir algo funcional, desplegado y con un propósito claro, confirmando una lección invaluable de este curso: **la empatía es también una habilidad técnica**.
+
+---
+```
