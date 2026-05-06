@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BiblioDivergente — La lectura es para todas las mentes</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="logo-cerebro.png" />
+
+  <!-- SEO -->
+  <meta name="description" content="BiblioDivergente es una biblioteca digital con diseño universal: recomendaciones de lectura adaptadas para TDAH, dislexia, TEA y ansiedad lectora." />
+  <meta name="author" content="BiblioDivergente" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="BiblioDivergente — La lectura es para todas las mentes" />
+  <meta property="og:description" content="Recomendaciones de libros con IA, adaptadas a neurodiversidad. Diseño universal, sin barreras." />
+  <meta property="og:image" content="/src/banner.png" />
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="BiblioDivergente" />
+  <meta name="twitter:description" content="Recomendaciones de libros con IA, adaptadas a neurodiversidad." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Lexend:wght@300;350;400;500;600&family=JetBrains+Mono:wght@400;500&family=DM+Serif+Display:ital@0;1&family=Cormorant+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      corePlugins: { preflight: false },
+      theme: {
+        extend: {
+          colors: {
+            bg: 'var(--bg)', 'bg-soft': 'var(--bg-soft)', 'bg-card': 'var(--bg-card)',
+            ink: 'var(--ink)', 'ink-soft': 'var(--ink-soft)', 'ink-mute': 'var(--ink-mute)',
+            primary: 'var(--primary)', 'primary-soft': 'var(--primary-soft)',
+            accent: 'var(--accent)', 'accent-soft': 'var(--accent-soft)',
+            line: 'var(--line)', 'line-soft': 'var(--line-soft)',
+          },
+          fontFamily: { display: 'var(--font-display)', body: 'var(--font-body)', mono: 'var(--font-mono)' },
+          maxWidth: { container: 'var(--container)', 'container-narrow': 'var(--container-narrow)' },
+          screens: { 'bp-sm': { max: '600px' }, 'bp-md': { max: '900px' } },
+          animation: {
+            'fade-up':    'fadeUp 0.5s ease both',
+            'pulse-soft': 'pulse 2.4s ease-in-out infinite',
+            'bounce-dot': 'bounce 1.2s ease-in-out infinite',
+          },
+        },
+      },
+    };
+  </script>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <header>
+    <nav class="nav">
+      <div class="max-w-container mx-auto py-[18px] px-8 flex items-center justify-between gap-8">
+        <div class="flex items-center gap-2.5 font-display text-[22px] tracking-[-0.01em]">
+          <img src="logo-cerebro.png" alt="" aria-hidden="true" class="w-7 h-7 object-contain" />
+          <span>BiblioDivergente</span>
+        </div>
+        <div class="flex gap-7 text-sm nav-links bp-sm:hidden">
+          <a href="#manifesto" class="text-inherit no-underline transition-colors duration-150 hover:text-accent">Manifiesto</a>
+          <a href="#buscador" class="text-inherit no-underline transition-colors duration-150 hover:text-accent">Buscador</a>
+          <a href="#mentes" class="text-inherit no-underline transition-colors duration-150 hover:text-accent">Mentes</a>
+          <a href="#laboratorio" class="text-inherit no-underline transition-colors duration-150 hover:text-accent">Laboratorio</a>
+          <a href="#voces" class="text-inherit no-underline transition-colors duration-150 hover:text-accent">Voces</a>
+        </div>
+        
+      </div>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- Hero -->
+    <section class="pt-[clamp(60px,9vw,120px)] pb-[clamp(60px,8vw,100px)] relative">
+      <div class="container">
+        <div class="flex items-center justify-between gap-6 mb-14 flex-wrap">
+          <span class="eyebrow font-body text-[11px] font-medium tracking-[0.22em] uppercase text-ink-soft inline-flex items-center gap-3">Biblioteca digital · Diseño universal</span>
+        </div>
+        <h1 class="max-w-[14ch] text-center mx-auto">
+          La lectura es para todas <br>
+          <span class="italic text-primary font-display">las mentes.</span>
+        </h1>
+        <div class="mt-14 flex flex-wrap gap-2 justify-center">
+          <span class="tag">TDAH</span>
+          <span class="tag">Dislexia</span>
+          <span class="tag">TEA</span>
+          <span class="tag">Ansiedad lectora</span>
+          <span class="tag">Hipersensibilidad visual</span>
+          <span class="tag">Diversidad cultural</span>
+        </div>
+        <dl class="mt-14 grid grid-cols-3 gap-8 border-t border-line pt-8 bp-md:grid-cols-1 bp-sm:grid-cols-1 text-center">
+          <div class="flex flex-col items-center">
+            <dt class="font-mono text-[10.5px] tracking-[0.18em] uppercase text-ink-mute mb-2">Brújula</dt>
+            <dd class="font-display text-[22px] leading-[1.2]">Diversidad es <em>nuestro norte</em></dd>
+          </div>
+          <div class="flex flex-col items-center">
+            <dt class="font-mono text-[10.5px] tracking-[0.18em] uppercase text-ink-mute mb-2">Método</dt>
+            <dd class="font-display text-[22px] leading-[1.2]">Adaptación con <em>inteligencia artificial</em></dd>
+          </div>
+          <div class="flex flex-col items-center">
+            <dt class="font-mono text-[10.5px] tracking-[0.18em] uppercase text-ink-mute mb-2">Promesa</dt>
+            <dd class="font-display text-[22px] leading-[1.2]">Leer <em>sin barreras</em></dd>
+          </div>
+        </dl>
+
+      </div>
+    </section>
+
+    <!-- Manifesto -->
+    <section class="py-[clamp(80px,10vw,140px)] bg-[#AE9372] border-t border-b border-[#A8CCB8]" id="manifesto">
+      <div class="container">
+        <div style="margin-bottom:64px">
+          <span class="eyebrow font-body text-[11px] font-medium tracking-[0.22em] uppercase text-ink inline-flex items-center gap-3">Manifiesto · 2026</span>
+        </div>
+        <div class="grid grid-cols-[1fr_1.3fr] gap-[clamp(40px,6vw,96px)] items-start bp-md:grid-cols-1 bp-md:gap-10">
+          <div>
+            <p class="manifesto-quote font-display text-[clamp(28px,3.4vw,44px)] leading-[1.18] tracking-[-0.01em]">
+              BiblioDivergente nació de una <span class="italic text-primary">pregunta simple:</span> ¿por qué los textos no se adaptan a las personas?
+            </p>
+            <span class="mt-6 inline-block font-body text-[11px] tracking-[0.15em] uppercase text-primary border-t border-b border-primary py-2">Diseñado con Diseño Universal · Construido con empatía</span>
+          </div>
+          <div class="flex flex-col gap-5 text-[17px] leading-[1.7] text-ink">
+            <p class="max-w-[56ch]">Para quienes tienen <strong>TDAH, dislexia, TEA</strong> o simplemente leen diferente, la web estándar es una barrera. Esta herramienta es la respuesta.</p>
+            <p class="max-w-[56ch]">Cada mente procesa la información de manera única. Algunas necesitan <em>menos ruido visual</em>. Otras, oraciones más cortas. Otras, simplemente más tiempo.</p>
+            <p class="max-w-[56ch]">Ninguna forma de leer es incorrecta: el problema siempre fue que los textos no se adaptaban a las personas. Hoy, eso cambia.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="buscador" class="py-[clamp(80px,10vw,140px)] text-center relative"></section>
+
+    <section id="mentes" class="py-[clamp(80px,10vw,140px)] bg-[#AE9372] border-t border-line"></section>
+
+    <section id="laboratorio" class="py-[clamp(80px,10vw,140px)] border-t border-line border-b bg-bg"></section>
+
+    <!-- CTA -->
+    <section class="cta py-[clamp(80px,10vw,140px)] bg-primary text-bg text-center">
+      <div class="container narrow">
+        <span class="eyebrow both font-body text-[11px] font-medium tracking-[0.22em] uppercase text-ink-soft inline-flex items-center gap-3">Comenzá · Sin barreras</span>
+        <h2 class="text-bg max-w-[16ch] mx-auto mt-6 mb-8">Tu próximo libro <br><span class="italic text-accent-soft">te está esperando.</span></h2>
+        <p class="lead">Buscá sugerencias en base a tus intereses. Leé como tu mente lo necesita. Sin juicios, sin presión, sin barreras.</p>
+        <div class="mt-10 flex gap-4 justify-center flex-wrap">
+          <a href="#buscador" class="btn">Buscar mi próximo libro →</a>
+          <a href="#laboratorio" class="btn ghost">Probar el laboratorio</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-[clamp(80px,10vw,140px)]" id="voces">
+      <div class="container">
+        <div class="text-center mb-16">
+          <span class="eyebrow both font-body text-[11px] font-medium tracking-[0.22em] uppercase text-ink-soft inline-flex items-center gap-3">Voces · Lecturas reales</span>
+          <h2 class="max-w-[18ch] mx-auto mt-4">Mentes que ya leen <span class="italic text-primary">sin pedir permiso.</span></h2>
+        </div>
+        <div class="grid grid-cols-4 gap-8 bp-md:grid-cols-2 bp-sm:grid-cols-1">
+          <article class="border-t border-ink pt-6 flex flex-col gap-5">
+            <div class="font-display text-[64px] leading-[0.5] text-accent italic h-6">"</div>
+            <p class="testimonial-quote font-display font-normal text-[22px] leading-[1.35] tracking-[-0.005em]">Siempre sentí que la literatura era un club exclusivo. Aquí, el modo de lectura limpia eliminó el ruido visual y por fin pude conectar con la historia.</p>
+            <div class="mt-auto flex flex-col gap-1 pt-6 border-t border-dotted border-line">
+              <span class="font-body font-medium text-sm">Julián V.</span>
+              <span class="font-bold text-[10.5px] tracking-[0.15em] uppercase text-accent">Lector · Sensibilidad Visual</span>
+            </div>
+          </article>
+          <article class="border-t border-ink pt-6 flex flex-col gap-5">
+            <div class="font-display text-[64px] leading-[0.5] text-accent italic h-6">"</div>
+            <p class="testimonial-quote font-display font-normal text-[22px] leading-[1.35] tracking-[-0.005em]">Poder cambiar el contraste y el peso de las letras cambió mi fatiga mental. Ya no me rindo a la tercera página; ahora disfruto el proceso.</p>
+            <div class="mt-auto flex flex-col gap-1 pt-6 border-t border-dotted border-line">
+              <span class="font-body font-medium text-sm">Elena K.</span>
+              <span class="font-bold text-[10.5px] tracking-[0.15em] uppercase text-accent">Lectora · Neurodivergente</span>
+            </div>
+          </article>
+          <article class="border-t border-ink pt-6 flex flex-col gap-5">
+            <div class="font-display text-[64px] leading-[0.5] text-accent italic h-6">"</div>
+            <p class="testimonial-quote font-display font-normal text-[22px] leading-[1.35] tracking-[-0.005em]">La síntesis de conceptos complejos me permitió abordar textos académicos que antes me bloqueaban. Es como tener un puente hecho a mi medida.</p>
+            <div class="mt-auto flex flex-col gap-1 pt-6 border-t border-dotted border-line">
+              <span class="font-body font-medium text-sm">Marcos S.</span>
+              <span class="font-bold text-[10.5px] tracking-[0.15em] uppercase text-accent">Estudiante · Migraña</span>
+            </div>
+          </article>
+          <article class="border-t border-ink pt-6 flex flex-col gap-5">
+            <div class="font-display text-[64px] leading-[0.5] text-accent italic h-6">"</div>
+            <p class="testimonial-quote font-display font-normal text-[22px] leading-[1.35] tracking-[-0.005em]">Increíble cómo el resaltado de enfoque me ayuda a no saltar de renglón. Es la primera herramienta que no intenta 'curarme', sino acompañarme.</p>
+            <div class="mt-auto flex flex-col gap-1 pt-6 border-t border-dotted border-line">
+              <span class="font-body font-medium text-sm">Sofía L.</span>
+              <span class="font-bold text-[10.5px] tracking-[0.15em] uppercase text-accent">Lectora · Dislexia</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer pt-20 pb-8 bg-[#AE9372] text-ink">
+    <div class="container">
+      <div class="grid grid-cols-[2fr_1fr_1fr_1fr] gap-12 mb-16 bp-md:grid-cols-1 bp-md:gap-10 bp-sm:grid-cols-1">
+        <div>
+          <div class="footer-brand font-display text-[32px] mb-3">BiblioDivergente</div>
+          <img src="logo-cerebro-dark.png" alt="BiblioDivergente" class="w-14 h-14 object-contain mt-2 opacity-80" />
+        </div>
+        <div>
+          <h5 class="font-mono text-[11px] tracking-[0.18em] uppercase font-medium mb-5">Biblioteca</h5>
+          <ul class="flex flex-col gap-2.5 list-none">
+            <li><a href="#buscador" class="text-sm">Buscador IA</a></li>
+            <li><a href="#laboratorio" class="text-sm">Laboratorio</a></li>
+            <li><a href="#mentes" class="text-sm">Seis mentes</a></li>
+            <li><a href="#voces" class="text-sm">Testimonios</a></li>
+          </ul>
+        </div>
+        <div>
+          <h5 class="font-mono text-[11px] tracking-[0.18em] uppercase font-medium mb-5">Sobre</h5>
+          <ul class="flex flex-col gap-2.5 list-none">
+            <li><a href="#manifesto" class="text-sm">Manifiesto</a></li>
+            <li><a href="#" class="text-sm">Equipo</a></li>
+            <li><a href="#" class="text-sm">Diseño Universal</a></li>
+            <li><a href="#" class="text-sm">Investigación</a></li>
+          </ul>
+        </div>
+        <div>
+          <h5 class="font-mono text-[11px] tracking-[0.18em] uppercase font-medium mb-5">Contacto</h5>
+          <ul class="flex flex-col gap-2.5 list-none">
+            <li><a href="#" class="text-sm">hola@BiblioDivergente.ar</a></li>
+            <li><a href="#" class="text-sm">Buenos Aires · 2026</a></li>
+            <li><a href="#" class="text-sm">Newsletter</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom font-extrabold flex justify-between items-center font-mono text-[12px] tracking-[0.15em] uppercase pt-8">
+        <span>© 2026 BiblioDivergente · Desarrollado con 💛 por <a href="https://aylen-frisoli.vercel.app/" target="_blank" rel="noopener" class="hover:text-ink transition-colors">Aylén Frísoli</a> · <a href="https://trece.ar" target="_blank" rel="noopener" class="hover:text-ink transition-colors">TreceAR</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <div id="root-tweaks"></div>
+
+  <script type="text/babel" src="app.js"></script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
