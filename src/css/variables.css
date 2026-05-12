@@ -1,0 +1,56 @@
+/* ── Design tokens ─────────────────────────────────────────────────────────── */
+
+:root {
+  --bg: #F2EBDD;
+  --bg-soft: #ECE3D0;
+  --bg-card: #F7F1E3;
+  --ink: #2A2418;
+  --ink-soft: #5C5340;
+  --ink-mute: #8A7F68;
+  --primary: #1F3A2E;
+  --primary-soft: #4A6B57;
+  --accent: #C66B3D;
+  --accent-soft: #D9926A;
+  --line: #C9BFA6;
+  --line-soft: #DCD3BC;
+  --font-display: 'DM Serif Display', 'Fraunces', Georgia, serif;
+  --font-body: 'Lexend', 'Helvetica Neue', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+  --container: 1180px;
+  --container-narrow: 880px;
+}
+
+[data-palette="salvia"] {
+  --bg: #EFEAE0;
+  --bg-soft: #E5DECF;
+  --bg-card: #F4EFE5;
+  --ink: #2C2A22;
+  --primary: #4A5D44;
+  --primary-soft: #7A8C73;
+  --accent: #B8884E;
+  --accent-soft: #CFA876;
+  --line: #C4BBA3;
+  --line-soft: #D6CDB6;
+}
+
+[data-palette="borgo"] {
+  --bg: #F1E8DC;
+  --bg-soft: #E8DDCD;
+  --bg-card: #F6EEE2;
+  --ink: #2A1F1A;
+  --primary: #6B2A2E;
+  --primary-soft: #93494D;
+  --accent: #5E7A86;
+  --accent-soft: #8AA0A9;
+  --line: #C9B9A0;
+  --line-soft: #DDD0B8;
+}
+
+[data-contrast="high"] {
+  --bg: #F8F2E2;
+  --ink: #0A0A05;
+  --ink-soft: #1A1A10;
+  --primary: #0F1F18;
+  --accent: #8B3D17;
+  --line: #6B5F45;
+}

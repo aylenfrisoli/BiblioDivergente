@@ -6,7 +6,7 @@
   <title>BiblioDivergente — La lectura es para todas las mentes</title>
 
   <!-- Favicon -->
-  <link rel="icon" href="logo-cerebro.png" />
+  <link rel="icon" href="src/logo-cerebro.png" />
 
   <!-- SEO -->
   <meta name="description" content="BiblioDivergente es una biblioteca digital con diseño universal: recomendaciones de lectura adaptadas para TDAH, dislexia, TEA y ansiedad lectora." />
@@ -28,33 +28,14 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Lexend:wght@300;350;400;500;600&family=JetBrains+Mono:wght@400;500&family=DM+Serif+Display:ital@0;1&family=Cormorant+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="src/css/variables.css" />
+  <link rel="stylesheet" href="src/css/base.css" />
+  <link rel="stylesheet" href="src/css/components.css" />
+  <link rel="stylesheet" href="src/css/sections.css" />
+  <link rel="stylesheet" href="src/css/tweaks.css" />
 
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      corePlugins: { preflight: false },
-      theme: {
-        extend: {
-          colors: {
-            bg: 'var(--bg)', 'bg-soft': 'var(--bg-soft)', 'bg-card': 'var(--bg-card)',
-            ink: 'var(--ink)', 'ink-soft': 'var(--ink-soft)', 'ink-mute': 'var(--ink-mute)',
-            primary: 'var(--primary)', 'primary-soft': 'var(--primary-soft)',
-            accent: 'var(--accent)', 'accent-soft': 'var(--accent-soft)',
-            line: 'var(--line)', 'line-soft': 'var(--line-soft)',
-          },
-          fontFamily: { display: 'var(--font-display)', body: 'var(--font-body)', mono: 'var(--font-mono)' },
-          maxWidth: { container: 'var(--container)', 'container-narrow': 'var(--container-narrow)' },
-          screens: { 'bp-sm': { max: '600px' }, 'bp-md': { max: '900px' } },
-          animation: {
-            'fade-up':    'fadeUp 0.5s ease both',
-            'pulse-soft': 'pulse 2.4s ease-in-out infinite',
-            'bounce-dot': 'bounce 1.2s ease-in-out infinite',
-          },
-        },
-      },
-    };
-  </script>
+  <script src="src/js/tailwind.config.js"></script>
 
   <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
@@ -66,7 +47,7 @@
     <nav class="nav">
       <div class="max-w-container mx-auto py-[18px] px-8 flex items-center justify-between gap-8">
         <div class="flex items-center gap-2.5 font-display text-[22px] tracking-[-0.01em]">
-          <img src="logo-cerebro.png" alt="" aria-hidden="true" class="w-7 h-7 object-contain" />
+          <img src="src/logo-cerebro.png" alt="" aria-hidden="true" class="w-7 h-7 object-contain" />
           <span>BiblioDivergente</span>
         </div>
         <div class="flex gap-7 text-sm nav-links bp-sm:hidden">
@@ -211,7 +192,7 @@
       <div class="grid grid-cols-[2fr_1fr_1fr_1fr] gap-12 mb-16 bp-md:grid-cols-1 bp-md:gap-10 bp-sm:grid-cols-1">
         <div>
           <div class="footer-brand font-display text-[32px] mb-3">BiblioDivergente</div>
-          <img src="logo-cerebro-dark.png" alt="BiblioDivergente" class="w-14 h-14 object-contain mt-2 opacity-80" />
+          <img src="src/logo-cerebro-dark.png" alt="BiblioDivergente" class="w-14 h-14 object-contain mt-2 opacity-80" />
         </div>
         <div>
           <h5 class="font-mono text-[11px] tracking-[0.18em] uppercase font-medium mb-5">Biblioteca</h5>
@@ -248,7 +229,14 @@
 
   <div id="root-tweaks"></div>
 
-  <script type="text/babel" src="app.js"></script>
-<script defer src="/_vercel/insights/script.js"></script>
+  <!-- JS — cargados en orden de dependencia -->
+  <script src="src/js/data.js"></script>
+  <script type="text/babel" src="src/js/tweaks.js"></script>
+  <script type="text/babel" src="src/js/search.js"></script>
+  <script type="text/babel" src="src/js/conditions.js"></script>
+  <script type="text/babel" src="src/js/lab.js"></script>
+  <script type="text/babel" src="src/js/app.js"></script>
+
+  <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>

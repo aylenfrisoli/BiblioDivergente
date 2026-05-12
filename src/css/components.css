@@ -1,0 +1,84 @@
+/* ── Layout primitives ─────────────────────────────────────────────────────── */
+
+.container { max-width: var(--container); margin: 0 auto; padding: 0 32px; }
+.container.narrow { max-width: var(--container-narrow); }
+
+/* ── Typography ────────────────────────────────────────────────────────────── */
+
+h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 400; color: var(--ink); letter-spacing: -0.015em; line-height: 1.05; }
+h1 { font-size: clamp(48px, 7vw, 96px); }
+h2 { font-size: clamp(36px, 4.5vw, 64px); }
+h3 { font-size: clamp(24px, 2.5vw, 32px); }
+h4 { font-size: 20px; line-height: 1.25; }
+
+em { font-style: italic; font-family: var(--font-display); }
+
+.lead { font-size: clamp(18px, 1.6vw, 22px); line-height: 1.55; color: var(--ink-soft); font-weight: 300; max-width: 56ch; }
+
+p { max-width: 64ch; }
+
+/* ── Buttons ───────────────────────────────────────────────────────────────── */
+
+.btn {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  padding: 14px 28px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s ease;
+  background: var(--primary);
+  color: var(--bg);
+  border-radius: 2px;
+  text-decoration: none;
+}
+.btn:hover { background: var(--ink); transform: translateY(-1px); }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+.btn.ghost:hover { background: var(--ink); color: var(--bg); }
+
+/* ── Tag / pill ────────────────────────────────────────────────────────────── */
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink-soft);
+  background: var(--bg-card);
+  font-weight: 600;
+}
+
+/* ── Eyebrow decorators ────────────────────────────────────────────────────── */
+
+.eyebrow::before,
+.eyebrow.both::after {
+  content: '';
+  display: block;
+  width: 32px;
+  height: 1px;
+  background: var(--ink-mute);
+}
+.eyebrow.no-line::before { display: none; }
+
+/* ── Nav ───────────────────────────────────────────────────────────────────── */
+
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--primary);
+  border-bottom: 1px solid color-mix(in srgb, var(--bg) 12%, transparent);
+  color: var(--bg);
+}
+.nav-logo-icon { border-color: color-mix(in srgb, var(--bg) 30%, transparent); }
+.nav-links { color: color-mix(in srgb, var(--bg) 72%, transparent); }
+.nav-badge { color: color-mix(in srgb, var(--bg) 50%, transparent); }
