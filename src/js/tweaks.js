@@ -25,9 +25,17 @@ function useTweaks(defaults) {
 
 function TweaksPanel({ title = 'Tweaks', children }) {
   const [open, setOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => window.matchMedia('(max-width: 639px)').matches);
   const dragRef   = useRef(null);
   const offsetRef = useRef({ x: 16, y: 16 });
   const PAD = 16;
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 639px)');
+    const handler = e => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
 
   const clampToViewport = useCallback(() => {
     const panel = dragRef.current;
@@ -83,15 +91,19 @@ function TweaksPanel({ title = 'Tweaks', children }) {
     window.addEventListener('mouseup', up);
   };
 
-  if (!open) return null;
+  if (!open && !isMobile) return null;
   return (
-    <div ref={dragRef} className="twk-panel" style={{ right: offsetRef.current.x, bottom: offsetRef.current.y }}>
-      <div className="twk-hd" onMouseDown={onDragStart}>
-        <b>{title}</b>
-        <button className="twk-x" onMouseDown={e => e.stopPropagation()} onClick={dismiss}>✕</button>
+    <>
+      {isMobile && <div className="twk-backdrop" data-open={open ? '1' : '0'} onClick={dismiss} />}
+      <div ref={dragRef} className="twk-panel" data-open={open ? '1' : '0'}
+        style={isMobile ? undefined : { right: offsetRef.current.x, bottom: offsetRef.current.y }}>
+        <div className="twk-hd" onMouseDown={isMobile ? undefined : onDragStart}>
+          <b>{title}</b>
+          <button className="twk-x" onMouseDown={e => e.stopPropagation()} onClick={dismiss}>✕</button>
+        </div>
+        <div className="twk-body">{children}</div>
       </div>
-      <div className="twk-body">{children}</div>
-    </div>
+    </>
   );
 }
 

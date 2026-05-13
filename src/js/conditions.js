@@ -48,7 +48,7 @@ function ConditionsGrid({ view }) {
       <div className="grid grid-cols-2 gap-16 items-end mb-[72px] bp-md:grid-cols-1 bp-md:gap-10">
         <div>
           <Eyebrow>Diferentes mentes · Diferentes maneras</Eyebrow>
-          <h2 className="max-w-[14ch]" style={{ marginTop: 24 }}>Las barreras son de <span className="italic text-primary">diseño,</span> no de las personas.</h2>
+          <h2 className="max-w-[14ch] text-bg" style={{ marginTop: 24 }}>Las barreras son de <span className="italic text-primary">diseño,</span> no de las personas.</h2>
         </div>
         <p className="lead">Cada mente procesa de manera única. Acá explicamos cómo BiblioDivergente atiende a seis formas de leer que la web estándar suele ignorar.</p>
       </div>
