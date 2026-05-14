@@ -97,6 +97,113 @@
   .lab-backdrop[data-open="1"] { display: block; }
 }
 
+/* ── Lab action row (Transformar + Personalizar) ──────────────────────────── */
+
+.lab-action-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.lab-customize-btn { display: none; }
+
+@media (max-width: 639px) {
+  .lab-customize-btn { display: flex; }
+  .lab-action-row { flex-direction: column; align-items: stretch; }
+  .lab-action-row > button { width: 100%; justify-content: center; }
+}
+
+/* ── Lab Extended button ───────────────────────────────────────────────────── */
+
+.lab-btn-ext {
+  font-family: var(--font-body);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  padding: 10px 20px;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  background: transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.2s ease;
+  border-radius: 2px;
+}
+.lab-btn-ext:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+
+/* ── Tooltips de tweaks neurodivergentes ───────────────────────────────────── */
+
+.lab-tweak-tooltip-wrap { position: relative; }
+.lab-tweak-tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: var(--bg);
+  font-family: var(--font-body);
+  font-size: 11px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 20;
+  pointer-events: none;
+}
+.lab-tweak-tooltip-wrap:hover .lab-tweak-tooltip { display: block; }
+
+/* ── Progress bar (lab-extendido) ──────────────────────────────────────────── */
+
+.lab-progress-bar {
+  height: 3px;
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.lab-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.4s ease;
+  border-radius: 2px;
+}
+
+/* ── Lab aside — sticky desktop ───────────────────────────────────────────── */
+
+#laboratorio .lab-aside {
+  position: sticky;
+  top: 100px;
+}
+
+@media (max-width: 900px) {
+  #laboratorio .lab-aside {
+    position: static;
+  }
+}
+
+#lab-extendido .lab-aside {
+  position: sticky;
+  top: 24px;
+}
+
+@media (max-width: 900px) {
+  #lab-extendido .lab-aside {
+    position: static;
+  }
+}
+
+/* ── Dropzone (lab-extendido) ──────────────────────────────────────────────── */
+
+.lab-dropzone {
+  border: 2px dashed color-mix(in srgb, var(--accent) 40%, transparent);
+  border-radius: 12px;
+  padding: 48px 24px;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.2s, background 0.2s;
+  user-select: none;
+}
+.lab-dropzone:hover,
+.lab-dropzone[data-dragover="1"] {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
+}
+
 /* ── Text-wrap: pretty ─────────────────────────────────────────────────────── */
 
 .manifesto-quote { text-wrap: pretty; }

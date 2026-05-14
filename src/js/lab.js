@@ -1,3 +1,14 @@
+const CONNECTORS = ['pero','sin embargo','aunque','por lo tanto','además','porque','entonces','mientras','después','antes','finalmente','asimismo','no obstante','de hecho','por ejemplo'];
+const RE_CONN = new RegExp(`(${CONNECTORS.map(c => c.replace(/ /g, '\\s+')).join('|')})`, 'gi');
+function applyConnectors(text) {
+  const parts = text.split(RE_CONN);
+  return parts.map((p, i) =>
+    i % 2 !== 0 && p ? <mark key={i} style={{background:'transparent',color:'var(--accent)',fontWeight:500}}>{p}</mark> : p
+  );
+}
+
+const WOLF_TEXT = "Puesto que la lectura no es natural, no existe un gen específico para ella; por el contrario, para aprender a leer, cada cerebro debe aprender a realizar nuevas conexiones entre sus partes más antiguas, diseñadas originalmente para otros fines. En consecuencia, el cerebro de cada lector es ligeramente diferente. Para aquellos con mentes divergentes, este proceso de cableado sigue rutas distintas, lo que a menudo resulta en un acceso más rico a las imágenes y a los conceptos globales, a costa de la rapidez en la descodificación lineal.";
+
 function Lab() {
   const [size,     setSize]     = useState(17);
   const [spacing,  setSpacing]  = useState(1.7);
@@ -6,51 +17,92 @@ function Lab() {
   const [contrast, setContrast] = useState("calm");
   const [chunked,  setChunked]  = useState(false);
   const [preset,   setPreset]   = useState("default");
-  const [userText, setUserText] = useState("");
-  const [activeText, setActiveText] = useState(null);
-  const textareaRef = useRef(null);
-  const contentHeightRef = useRef(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  useEffect(() => {
-    if (activeText !== null || !textareaRef.current) return;
-    const ta = textareaRef.current;
-    ta.style.height = contentHeightRef.current ? `${contentHeightRef.current}px` : 'auto';
-    if (ta.scrollHeight > (contentHeightRef.current ?? 0)) {
-      ta.style.height = ta.scrollHeight + 'px';
-    }
-  }, [activeText]);
-
-  function applyPreset(p) {
-    setPreset(p);
-    if      (p === "tdah")     { setSize(18); setSpacing(2.0);  setLetter(0.02); setWidth(50); setContrast("calm"); setChunked(true);  }
-    else if (p === "dislexia") { setSize(19); setSpacing(2.0);  setLetter(0.05); setWidth(58); setContrast("calm"); setChunked(false); }
-    else if (p === "ansiedad") { setSize(17); setSpacing(1.85); setLetter(0.01); setWidth(54); setContrast("calm"); setChunked(true);  }
-    else if (p === "hiper")    { setSize(16); setSpacing(1.7);  setLetter(0);    setWidth(60); setContrast("dim");  setChunked(false); }
-    else                       { setSize(17); setSpacing(1.7);  setLetter(0);    setWidth(80); setContrast("calm"); setChunked(false); }
-  }
-
-  function handleChange(e) {
-    const ta = e.target;
-    setUserText(ta.value);
-    ta.style.height = '1px';
-    ta.style.height = ta.scrollHeight + 'px';
-    contentHeightRef.current = ta.scrollHeight;
-  }
-  function handleTransform() {
-    if (textareaRef.current) contentHeightRef.current = textareaRef.current.offsetHeight;
-    setActiveText(userText);
-  }
-  function handleEdit() { setActiveText(null); }
+  const [seqRead,   setSeqRead]   = useState(false);
+  const [seqIdx,    setSeqIdx]    = useState(0);
+  const [pauseVis,  setPauseVis]  = useState(false);
+  const [maxSpace,  setMaxSpace]  = useState(false);
+  const [blockRead, setBlockRead] = useState(false);
+  const [blockIdx,  setBlockIdx]  = useState(0);
+  const [markConn,  setMarkConn]  = useState(false);
 
   const bg  = contrast === "high" ? "#FFFCF0" : contrast === "dim" ? "#E8DFC8" : "var(--bg-card)";
   const ink = contrast === "high" ? "#000"    : contrast === "dim" ? "#3F3527" : "var(--ink)";
-  const paragraphs = activeText ? activeText.split("\n\n") : [];
 
-  const toggleCls = active =>
-    `flex-1 py-2 px-2.5 border-none font-body text-xs cursor-pointer transition-all duration-150 border-r border-line last:border-r-0 ${active ? 'bg-primary text-bg' : 'bg-transparent text-ink-soft hover:bg-bg-soft'}`;
+  const effectiveLH = maxSpace ? 2.8 : spacing;
+  const effectiveLS = maxSpace ? '0.04em' : `${letter}em`;
 
   const btnBase = "border-none bg-primary text-bg font-body text-[15px] px-7 py-4 cursor-pointer flex items-center gap-2 transition-colors duration-200 hover:bg-ink disabled:opacity-40 disabled:cursor-not-allowed";
+
+  const paragraphs = [WOLF_TEXT];
+
+  const visibleParagraphs = blockRead ? [paragraphs[blockIdx]] : paragraphs;
+
+  let globalSentIdx = 0;
+  const renderedParagraphs = visibleParagraphs.map((p, i) => {
+    const sentences = p.split(/(?<=[.!?])\s+/).filter(Boolean);
+    let sentenceNodes;
+
+    if (seqRead) {
+      sentenceNodes = sentences.map((s, j) => {
+        const gIdx = globalSentIdx++;
+        const isActive = gIdx === seqIdx;
+        return (
+          <span
+            key={j}
+            onClick={() => setSeqIdx(gIdx)}
+            style={{
+              display: 'block',
+              marginBottom: chunked ? '0.6em' : '0.2em',
+              opacity: isActive ? 1 : 0.3,
+              cursor: 'pointer',
+              transition: 'opacity 0.2s',
+              outline: isActive ? '1px solid color-mix(in srgb, var(--accent) 40%, transparent)' : 'none',
+              borderRadius: '2px',
+              paddingLeft: '2px',
+            }}>
+            {markConn ? applyConnectors(s) : s}
+          </span>
+        );
+      });
+    } else if (chunked) {
+      let sentIdx = 0;
+      sentenceNodes = [];
+      sentences.forEach((s, j) => {
+        if (pauseVis && sentIdx > 0 && sentIdx % 3 === 0) {
+          sentenceNodes.push(<hr key={`hr-${j}`} style={{border:'none',borderTop:'1px solid color-mix(in srgb, var(--line) 60%, transparent)',margin:'0.8em 0'}} />);
+        }
+        sentenceNodes.push(
+          <span key={j} style={{ display: "block", marginBottom: j < sentences.length - 1 ? "0.6em" : 0 }}>
+            {markConn ? applyConnectors(s) : s}
+          </span>
+        );
+        sentIdx++;
+      });
+    } else {
+      let sentIdx = 0;
+      sentenceNodes = [];
+      sentences.forEach((s, j) => {
+        if (pauseVis && sentIdx > 0 && sentIdx % 3 === 0) {
+          sentenceNodes.push(<hr key={`hr-${j}`} style={{border:'none',borderTop:'1px solid color-mix(in srgb, var(--line) 60%, transparent)',margin:'0.8em 0'}} />);
+        }
+        sentenceNodes.push(markConn
+          ? <React.Fragment key={j}>{applyConnectors(s)}{j < sentences.length - 1 ? ' ' : ''}</React.Fragment>
+          : <React.Fragment key={j}>{s}{j < sentences.length - 1 ? ' ' : ''}</React.Fragment>
+        );
+        sentIdx++;
+      });
+    }
+
+    return (
+      <p key={i} style={{ marginBottom: chunked ? "1.6em" : "1em" }}>
+        {sentenceNodes}
+      </p>
+    );
+  });
+
+  const totalSentences = paragraphs.flatMap(p => p.split(/(?<=[.!?])\s+/).filter(Boolean)).length;
 
   return (
     <div className="container">
@@ -59,146 +111,91 @@ function Lab() {
         <h2 className="max-w-[18ch] mx-auto mt-4 mb-3">Cambiá el texto, no la <span className="italic">persona.</span></h2>
         <p className="lead" style={{ margin: "0 auto" }}>Mové los controles. Probá un perfil. Sentí cómo el mismo párrafo se vuelve tuyo.</p>
       </div>
-      <div className="grid grid-cols-[1fr_320px] gap-12 items-stretch bp-md:grid-cols-1 bp-md:gap-10">
+      <div className="grid grid-cols-[1fr_320px] gap-12 items-start bp-md:grid-cols-1 bp-md:gap-10">
 
         {/* ── Main card ─────────────────────────────────────────────────────────── */}
-        <div className="bg-bg-card border border-line p-[56px_64px] transition-all duration-300 bp-sm:p-[32px_24px] flex flex-col"
+        <div className="bg-bg-card border border-line p-[56px_64px] transition-all duration-300 bp-sm:p-[32px_24px]"
              style={{ background: bg, color: ink }}>
 
-          {/* Label */}
-          <label className="block font-body font-medium text-[12px] tracking-wider uppercase mb-4"
-                 style={{ color: 'var(--accent)' }}>
-            Tu texto
-          </label>
+          {/* Eyebrow + título + subtítulo */}
+          <div style={{ marginBottom: '24px' }}>
+            <span style={{ fontFamily: 'var(--font-body)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.18em', color: 'var(--accent)', opacity: 0.6, display: 'block', marginBottom: '8px' }}>
+              Texto de prueba
+            </span>
+            <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '22px', color: 'var(--primary)', margin: '0 0 8px', fontWeight: 400, lineHeight: 1.2 }}>
+              Probá cómo leería tu mente este texto
+            </h3>
+            <p style={{ fontFamily: 'var(--font-body)', fontWeight: 300, fontSize: '14px', color: 'var(--ink-soft)', margin: 0, maxWidth: 'none' }}>
+              Activá los filtros del panel y observá cómo cambia tu experiencia lectora
+            </p>
+          </div>
 
-          {/* Content area: textarea (estado A) ↔ output div (estado B) — nunca coexisten */}
-          <div className="flex-1 flex flex-col">
-          {(() => {
-            const minH = contentHeightRef.current ?? 240;
-            const boxStyle = {
+          {/* Bloque de cita */}
+          <div
+            className="lab-text-body font-body"
+            aria-live="polite"
+            tabIndex={seqRead ? 0 : undefined}
+            onKeyDown={seqRead ? e => {
+              if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); setSeqIdx(i => Math.min(i + 1, totalSentences - 1)); }
+              if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { e.preventDefault(); setSeqIdx(i => Math.max(i - 1, 0)); }
+            } : undefined}
+            style={{
               fontSize: `${size}px`,
-              lineHeight: spacing,
-              letterSpacing: `${letter}em`,
+              lineHeight: effectiveLH,
+              letterSpacing: effectiveLS,
               maxWidth: `${width}ch`,
               width: '100%',
-              padding: '20px',
-              minHeight: `${minH}px`,
-              border: '1px solid color-mix(in srgb, var(--accent) 40%, transparent)',
-              borderRadius: '2px',
-              background: 'transparent',
+              padding: '24px 32px',
+              borderLeft: '3px solid var(--accent)',
+              borderRadius: '0 8px 8px 0',
+              background: 'color-mix(in srgb, var(--accent) 5%, transparent)',
               color: 'inherit',
               fontFamily: 'var(--font-body)',
               transition: 'font-size 0.3s, line-height 0.3s, letter-spacing 0.3s',
-            };
-            if (activeText === null) {
-              return (
-                <textarea
-                  ref={textareaRef}
-                  className="lab-textarea font-body"
-                  style={{ ...boxStyle, resize: 'none', outline: 'none', overflow: 'hidden' }}
-                  placeholder="Pegá tu texto aquí y probá cómo lo leería tu mente con cada adaptación activada..."
-                  maxLength={2000}
-                  aria-label="Ingresá tu texto para transformar"
-                  value={userText}
-                  onChange={handleChange}
-                />
-              );
-            }
-            return (
-              <div
-                className="lab-text-body font-body"
-                aria-live="polite"
-                style={{ ...boxStyle, overflowY: 'auto' }}>
-                {paragraphs.map((p, i) => (
-                  <p key={i} style={{ marginBottom: chunked ? "1.6em" : "1em" }}>
-                    {chunked
-                      ? p.split(". ").map((s, j, arr) =>
-                          <span key={j} style={{ display: "block", marginBottom: j < arr.length - 1 ? "0.6em" : 0 }}>
-                            {s + (j < arr.length - 1 ? "." : "")}
-                          </span>)
-                      : p}
-                  </p>
-                ))}
-              </div>
-            );
-          })()}
+              outline: 'none',
+            }}>
+            <span style={{ fontFamily: 'var(--font-display)', fontSize: '64px', color: 'var(--accent)', opacity: 0.3, display: 'block', lineHeight: 0.8, marginBottom: '8px' }}>"</span>
+            {renderedParagraphs}
+            <div style={{ marginTop: '20px', borderTop: '1px solid color-mix(in srgb, var(--accent) 20%, transparent)', marginBottom: '12px' }} />
+            <p style={{ margin: 0, maxWidth: 'none' }}>
+              <span style={{ fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: 500, color: 'var(--ink-mute)' }}>Fuente: </span>
+              <span style={{ fontFamily: 'var(--font-body)', fontSize: '11px', fontStyle: 'italic', color: 'var(--ink-mute)' }}>
+                Wolf, M. (2008). Cómo aprendemos a leer: Historia y ciencia del cerebro y la lectura. Ediciones B.
+              </span>
+            </p>
           </div>
 
-          {/* Counter + Button row */}
-          <div className="flex justify-between items-center mt-6 bp-sm:flex-col bp-sm:items-end bp-sm:gap-3">
-            <span className="font-body text-[12px]" style={{ color: 'var(--ink-mute)', opacity: 0.5 }}>
-              {(activeText !== null ? activeText : userText).length} / 2000
-            </span>
-            <button
-              className={`${btnBase} lab-transform-btn bp-sm:w-full bp-sm:justify-center`}
-              disabled={activeText === null && userText.length === 0}
-              onClick={activeText !== null ? handleEdit : handleTransform}>
-              {activeText !== null ? "Editar texto ✕" : "Transformar texto →"}
-            </button>
-          </div>
-          <button className={`${btnBase} lab-adapt-btn mt-4 w-full justify-center`}
+          {/* Botones */}
+          <button className={`${btnBase} lab-adapt-btn mt-6 w-full justify-center`}
             onClick={() => setDrawerOpen(true)}>
             Adapta tu texto →
           </button>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
+            <a href="/laboratorio-extendido.html"
+               className="lab-btn-ext"
+               style={{ textDecoration: 'none' }}>
+              Personalizá tu propio texto →
+            </a>
+          </div>
         </div>
 
-        {/* ── Controls aside ────────────────────────────────────────────────────── */}
-        <aside className="lab-aside border border-line sticky top-[100px] bg-bg-card bp-md:static"
-          data-open={drawerOpen ? '1' : '0'}>
-          <div className="lab-drawer-hd">
-            <span className="font-mono text-[11px] tracking-[0.12em] uppercase font-medium text-ink-mute">Adaptar lectura</span>
-            <button className="twk-x" onClick={() => setDrawerOpen(false)}>✕</button>
-          </div>
-          <div className="lab-aside-body p-8">
-            <h4 className="font-mono text-[11px] tracking-[0.18em] uppercase text-ink-mute font-medium mb-6 border-b border-line pb-3">Perfiles</h4>
-            <div className="flex flex-wrap gap-1.5 mb-6">
-              {[["default","Estándar"],["tdah","TDAH"],["dislexia","Dislexia"],["ansiedad","Ansiedad"],["hiper","Hipersensible"]].map(([k, l]) => (
-                <button key={k}
-                        className={`font-mono text-[10px] tracking-[0.12em] uppercase py-1.5 px-2.5 border cursor-pointer transition-all duration-150 ${preset === k ? 'bg-accent text-bg border-accent' : 'border-line bg-transparent text-ink-soft hover:border-accent hover:text-accent'}`}
-                        onClick={() => applyPreset(k)}>{l}</button>
-              ))}
-            </div>
-
-            <h4 className="font-mono text-[11px] tracking-[0.18em] uppercase text-ink-mute font-medium mb-6 border-b border-line pb-3">Tipografía</h4>
-            {[
-              ["Tamaño",             size,    v => { setSize(+v);    setPreset("custom"); }, { min: 14,   max: 24,  step: 1    }, `${size}px`],
-              ["Interlineado",       spacing, v => { setSpacing(+v); setPreset("custom"); }, { min: 1.4,  max: 2.4, step: 0.05 }, spacing.toFixed(2)],
-              ["Espacio entre letras",letter, v => { setLetter(+v);  setPreset("custom"); }, { min: 0,    max: 0.1, step: 0.005}, `${letter.toFixed(2)}em`],
-              ["Ancho de columna",   width,   v => { setWidth(+v);   setPreset("custom"); }, { min: 32,   max: 80,  step: 1    }, `${width} car.`],
-            ].map(([lbl, val, onChange, attrs, display]) => (
-              <div key={lbl} className="mb-6">
-                <div className="flex justify-between items-baseline text-[13px] mb-2">
-                  <span>{lbl}</span><span className="font-mono text-[11px] text-accent">{display}</span>
-                </div>
-                <input type="range" className="lab-slider" value={val} onChange={e => onChange(e.target.value)} {...attrs} />
-              </div>
-            ))}
-
-            <h4 className="font-mono text-[11px] tracking-[0.18em] uppercase text-ink-mute font-medium mb-6 border-b border-line pb-3 mt-6">Ambiente</h4>
-            <div className="mb-6">
-              <div className="flex justify-between items-baseline text-[13px] mb-2"><span>Contraste</span></div>
-              <div className="flex border border-line rounded-sm overflow-hidden">
-                {[["dim","Suave"],["calm","Calmo"],["high","Alto"]].map(([k, l]) => (
-                  <button key={k} className={toggleCls(contrast === k)} onClick={() => { setContrast(k); setPreset("custom"); }}>{l}</button>
-                ))}
-              </div>
-            </div>
-            <div className="mb-6">
-              <div className="flex justify-between items-baseline text-[13px] mb-2"><span>Fragmentar oraciones</span></div>
-              <div className="flex border border-line rounded-sm overflow-hidden">
-                <button className={toggleCls(!chunked)} onClick={() => { setChunked(false); setPreset("custom"); }}>No</button>
-                <button className={toggleCls(chunked)}  onClick={() => { setChunked(true);  setPreset("custom"); }}>Sí</button>
-              </div>
-            </div>
-          </div>
-          <div className="lab-drawer-ft">
-            <button className={`${btnBase} w-full justify-center`} onClick={() => setDrawerOpen(false)}>
-              Comenzá a leer →
-            </button>
-          </div>
-        </aside>
+        <TweaksDrawer
+          isOpen={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+          size={size} setSize={setSize}
+          spacing={spacing} setSpacing={setSpacing}
+          letter={letter} setLetter={setLetter}
+          width={width} setWidth={setWidth}
+          contrast={contrast} setContrast={setContrast}
+          chunked={chunked} setChunked={setChunked}
+          preset={preset} setPreset={setPreset}
+          seqRead={seqRead} setSeqRead={setSeqRead}
+          pauseVis={pauseVis} setPauseVis={setPauseVis}
+          maxSpace={maxSpace} setMaxSpace={setMaxSpace}
+          blockRead={blockRead} setBlockRead={setBlockRead}
+          markConn={markConn} setMarkConn={setMarkConn}
+        />
       </div>
-      <div className="lab-backdrop" data-open={drawerOpen ? '1' : '0'} onClick={() => setDrawerOpen(false)} />
     </div>
   );
 }

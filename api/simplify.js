@@ -31,12 +31,31 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'GROQ_API_KEY no configurada' });
   }
 
-  const { sinopsis, titulo } = req.body ?? {};
-  if (!sinopsis || typeof sinopsis !== 'string' || !sinopsis.trim()) {
-    return res.status(400).json({ error: 'El campo sinopsis es requerido' });
-  }
-  if (!titulo || typeof titulo !== 'string' || !titulo.trim()) {
-    return res.status(400).json({ error: 'El campo titulo es requerido' });
+  const { sinopsis, titulo, texto } = req.body ?? {};
+
+  let systemPrompt = SYSTEM_PROMPT;
+  let userContent;
+
+  if (texto && typeof texto === 'string' && texto.trim()) {
+    systemPrompt = `Tomá el siguiente fragmento de texto y reescribilo en exactamente 5 oraciones simples y directas.
+REGLAS ABSOLUTAS:
+- Usá SOLO la información que está en el fragmento recibido
+- No agregues información externa ni resumas globalmente
+- Máximo 10 palabras por oración
+- Sin metáforas, sin lenguaje figurado
+- Verbos activos y directos
+- Mantené el tema y los datos específicos del fragmento
+- Solo JSON válido sin markdown:
+{ "bullets": ["...", "...", "...", "...", "..."] }`;
+    userContent = `Simplificá este fragmento de texto: ${texto.trim()}`;
+  } else {
+    if (!sinopsis || typeof sinopsis !== 'string' || !sinopsis.trim()) {
+      return res.status(400).json({ error: 'El campo sinopsis es requerido' });
+    }
+    if (!titulo || typeof titulo !== 'string' || !titulo.trim()) {
+      return res.status(400).json({ error: 'El campo titulo es requerido' });
+    }
+    userContent = `Simplificá esta sinopsis del libro '${titulo.trim()}': ${sinopsis.trim()}`;
   }
 
   let groqRes;
@@ -50,10 +69,10 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model: 'llama-3.3-70b-versatile',
         messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: `Simplificá esta sinopsis del libro '${titulo.trim()}': ${sinopsis.trim()}` },
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userContent },
         ],
-        temperature: 0.3,
+        temperature: 0.2,
         max_tokens: 512,
       }),
     });

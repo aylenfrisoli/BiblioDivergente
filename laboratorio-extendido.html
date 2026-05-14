@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Laboratorio Extendido — BiblioDivergente</title>
+
+  <link rel="icon" href="src/logo-cerebro.png" />
+
+  <meta name="description" content="Subí un documento o pegá texto largo y explorá cómo lo procesaría tu mente." />
+  <meta name="robots" content="noindex" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Lexend:wght@300;350;400;500;600&family=JetBrains+Mono:wght@400;500&family=DM+Serif+Display:ital@0;1&family=Cormorant+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="src/css/variables.css" />
+  <link rel="stylesheet" href="src/css/base.css" />
+  <link rel="stylesheet" href="src/css/components.css" />
+  <link rel="stylesheet" href="src/css/sections.css" />
+  <link rel="stylesheet" href="src/css/tweaks.css" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="src/js/tailwind.config.js"></script>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
+</head>
+<body>
+
+  <header>
+    <nav class="nav">
+      <div class="max-w-container mx-auto py-[18px] px-8 flex items-center justify-between gap-8">
+        <a href="index.html" class="flex items-center gap-2.5 font-display text-[22px] tracking-[-0.01em] text-inherit no-underline">
+          <img src="src/logo-cerebro.png" alt="" aria-hidden="true" class="w-7 h-7 object-contain" />
+          <span>BiblioDivergente</span>
+        </a>
+        <div class="flex gap-7 text-sm nav-links bp-sm:hidden">
+          <a href="index.html#buscador" class="text-inherit no-underline transition-colors duration-150 hover:text-accent">Buscador</a>
+          <a href="index.html#mentes" class="text-inherit no-underline transition-colors duration-150 hover:text-accent">Mentes</a>
+          <a href="index.html#laboratorio" class="text-inherit no-underline transition-colors duration-150 hover:text-accent">Laboratorio</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- Hero -->
+    <section style="background: var(--primary); padding: clamp(60px,8vw,100px) 0;">
+      <div class="container">
+        <a href="index.html#laboratorio"
+           style="color: color-mix(in srgb, var(--bg) 70%, transparent); font-family: var(--font-body); font-size: 13px; letter-spacing: 0.02em; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 32px; transition: color 0.15s;"
+           onmouseover="this.style.color='var(--accent-soft)'" onmouseout="this.style.color='color-mix(in srgb, var(--bg) 70%, transparent)'">
+          ← Volver al Laboratorio
+        </a>
+        <h1 style="color: var(--bg); font-family: var(--font-display); font-size: clamp(36px,5vw,64px); font-weight: 400; letter-spacing: -0.015em; line-height: 1.05; max-width: 14ch; margin-bottom: 16px;">
+          Laboratorio <em style="color: var(--accent-soft);">Extendido</em>
+        </h1>
+        <p style="color: color-mix(in srgb, var(--bg) 72%, transparent); font-family: var(--font-body); font-size: clamp(16px,1.4vw,20px); max-width: 52ch; font-weight: 300; line-height: 1.55;">
+          Subí un documento o pegá texto largo. Explorá cómo lo procesaría tu mente.
+        </p>
+      </div>
+    </section>
+
+    <!-- App mount -->
+    <section style="padding: clamp(60px,8vw,100px) 0; background: var(--bg);">
+      <div id="lab-extendido" class="container"></div>
+    </section>
+
+  </main>
+
+  <footer class="footer pt-20 pb-8 bg-[#AE9372] text-ink">
+    <div class="container">
+      <div class="grid grid-cols-[2fr_1fr_1fr_1fr] gap-12 mb-16 bp-md:grid-cols-1 bp-md:gap-10">
+        <div>
+          <div class="footer-brand font-display text-[32px] mb-3">BiblioDivergente</div>
+          <img src="src/logo-cerebro-dark.png" alt="BiblioDivergente" class="w-14 h-14 object-contain mt-2 opacity-80" />
+        </div>
+        <div>
+          <h5 class="font-mono text-[11px] tracking-[0.18em] uppercase font-medium mb-5">Biblioteca</h5>
+          <ul class="flex flex-col gap-2.5 list-none">
+            <li><a href="index.html#buscador" class="text-sm">Buscador IA</a></li>
+            <li><a href="index.html#laboratorio" class="text-sm">Laboratorio</a></li>
+            <li><a href="index.html#mentes" class="text-sm">Seis mentes</a></li>
+            <li><a href="index.html#voces" class="text-sm">Testimonios</a></li>
+          </ul>
+        </div>
+        <div>
+          <h5 class="font-mono text-[11px] tracking-[0.18em] uppercase font-medium mb-5">Sobre</h5>
+          <ul class="flex flex-col gap-2.5 list-none">
+            <li><a href="index.html#manifesto" class="text-sm">Manifiesto</a></li>
+            <li><a href="#" class="text-sm">Diseño Universal</a></li>
+          </ul>
+        </div>
+        <div>
+          <h5 class="font-mono text-[11px] tracking-[0.18em] uppercase font-medium mb-5">Contacto</h5>
+          <ul class="flex flex-col gap-2.5 list-none">
+            <li><a href="#" class="text-sm">hola@BiblioDivergente.ar</a></li>
+            <li><a href="#" class="text-sm">Buenos Aires · 2026</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom font-extrabold flex justify-between items-center font-mono text-[12px] tracking-[0.15em] uppercase pt-8">
+        <span>© 2026 BiblioDivergente · Desarrollado con 💛 por <a href="https://aylen-frisoli.vercel.app/" target="_blank" rel="noopener" class="hover:text-ink transition-colors">Aylén Frísoli</a> · <a href="https://trece.ar" target="_blank" rel="noopener" class="hover:text-ink transition-colors">TreceAR</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <div id="root-tweaks"></div>
+
+  <script src="src/js/data.js"></script>
+  <script type="text/babel" src="src/js/tweaks.js"></script>
+  <script type="text/babel" src="src/js/tweaks-drawer.js"></script>
+  <script type="text/babel" src="src/js/lab-extendido.js"></script>
+
+  <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
