@@ -4,6 +4,7 @@
   --bg: #F2EBDD;
   --bg-soft: #ECE3D0;
   --bg-card: #F7F1E3;
+  --bg-sand: #AE9372;
   --ink: #2A2418;
   --ink-soft: #5C5340;
   --ink-mute: #8A7F68;
@@ -13,6 +14,7 @@
   --accent-soft: #D9926A;
   --line: #C9BFA6;
   --line-soft: #DCD3BC;
+  --line-sage: #A8CCB8;
   --font-display: 'DM Serif Display', 'Fraunces', Georgia, serif;
   --font-body: 'Lexend', 'Helvetica Neue', sans-serif;
   --font-mono: 'JetBrains Mono', 'Courier New', monospace;
@@ -52,5 +54,6 @@
   --ink-soft: #1A1A10;
   --primary: #0F1F18;
   --accent: #8B3D17;
+  --accent-soft: #6B2D10;
   --line: #6B5F45;
 }

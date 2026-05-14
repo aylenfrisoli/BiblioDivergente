@@ -148,21 +148,6 @@
 }
 .lab-tweak-tooltip-wrap:hover .lab-tweak-tooltip { display: block; }
 
-/* ── Progress bar (lab-extendido) ──────────────────────────────────────────── */
-
-.lab-progress-bar {
-  height: 3px;
-  background: color-mix(in srgb, var(--accent) 20%, transparent);
-  border-radius: 2px;
-  overflow: hidden;
-}
-.lab-progress-fill {
-  height: 100%;
-  background: var(--accent);
-  transition: width 0.4s ease;
-  border-radius: 2px;
-}
-
 /* ── Lab aside — sticky desktop ───────────────────────────────────────────── */
 
 #laboratorio .lab-aside {
@@ -237,6 +222,39 @@ p.testimonial-quote { text-wrap: pretty; font-family: 'Fraunces', Georgia, serif
   .container { padding: 0 24px; }
   .conditions-grid .condition-card { border-right: none !important; }
   .book-fit { grid-column: 2; margin-top: -8px; font-weight: 600; }
+}
+
+/* ── Lab Extended hero ─────────────────────────────────────────────────────── */
+
+.lab-ext-hero { background: var(--primary); padding: clamp(60px, 8vw, 100px) 0; }
+
+.lab-ext-back {
+  color: color-mix(in srgb, var(--bg) 70%, transparent);
+  font-family: var(--font-body);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 32px;
+  transition: color 0.15s;
+}
+.lab-ext-back:hover { color: var(--accent-soft); }
+
+.lab-ext-title {
+  color: var(--bg);
+  font-size: clamp(36px, 5vw, 64px);
+  max-width: 14ch;
+  margin-bottom: 16px;
+}
+
+.lab-ext-desc {
+  color: color-mix(in srgb, var(--bg) 72%, transparent);
+  font-size: clamp(16px, 1.4vw, 20px);
+  max-width: 52ch;
+  font-weight: 300;
+  line-height: 1.55;
 }
 
 /* ── Keyframes ─────────────────────────────────────────────────────────────── */

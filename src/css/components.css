@@ -13,7 +13,7 @@ h4 { font-size: 20px; line-height: 1.25; }
 
 em { font-style: italic; font-family: var(--font-display); }
 
-.lead { font-size: clamp(18px, 1.6vw, 22px); line-height: 1.55; color: var(--ink-soft); font-weight: 300; max-width: 56ch; }
+.lead { font-size: clamp(18px, 1.6vw, 22px); line-height: 1.55; color: var(--ink-soft); font-weight: 300; max-width: 56ch; margin: 0 auto; }
 
 p { max-width: 64ch; }
 
@@ -79,6 +79,4 @@ p { max-width: 64ch; }
   border-bottom: 1px solid color-mix(in srgb, var(--bg) 12%, transparent);
   color: var(--bg);
 }
-.nav-logo-icon { border-color: color-mix(in srgb, var(--bg) 30%, transparent); }
 .nav-links { color: color-mix(in srgb, var(--bg) 72%, transparent); }
-.nav-badge { color: color-mix(in srgb, var(--bg) 50%, transparent); }

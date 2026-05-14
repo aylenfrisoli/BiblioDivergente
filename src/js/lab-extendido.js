@@ -109,6 +109,7 @@ function LabExtendido() {
   const [confirmOpen, setConfirmOpen]     = useState(false);
   const [pendingAction, setPendingAction] = useState(null);
   const [asideOpen, setAsideOpen]         = useState(false);
+  const [textBoxMode, setTextBoxMode]     = useState('empty'); // 'empty' | 'editing' | 'preview'
   const fileInputRef = useRef(null);
   const outputRef    = useRef(null);
   const asideRef     = useRef(null);
@@ -166,10 +167,6 @@ function LabExtendido() {
     withConfirm(() => validateAndSetFile(f));
   }
 
-  function handlePasteChange(value) {
-    withConfirm(() => { setPasted(value); resetPages(); setErrorMsg(''); });
-  }
-
   function removeFile() {
     withConfirm(() => { setFile(null); resetPages(); setErrorMsg(''); if (fileInputRef.current) fileInputRef.current.value = ''; });
   }
@@ -182,11 +179,22 @@ function LabExtendido() {
     }
   }
 
+  function handleTextBlur() {
+    if (pasted.trim()) setTextBoxMode('preview');
+    else setTextBoxMode('empty');
+  }
+
+  function handleEditarTexto() {
+    resetPages();
+    setStatus('idle');
+    setTextBoxMode('editing');
+  }
+
   function navigateToPage(n) {
     setCurrentPage(n);
     setSeqIdx(0);
     setBlockIdx(0);
-    if (outputRef.current) outputRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (tab === 'upload' && outputRef.current) outputRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   async function handleProcess() {
@@ -282,17 +290,41 @@ function LabExtendido() {
     transition: 'font-size 0.3s, line-height 0.3s, letter-spacing 0.3s',
   };
 
-  function renderPage() {
+  // totalSentences at component scope so both the outer onKeyDown and renderPage can use it
+  const currentPageText = pages.length > 0 ? (pages[currentPage] || '') : '';
+  const currentSections = pages.length > 0 ? splitIntoSections(currentPageText) : [];
+  const totalSentences  = currentSections.reduce((acc, b) => acc + b.split(/(?<=[.!?])\s+/).filter(Boolean).length, 0);
+
+  const textBoxStyle = {
+    ...boxStyle,
+    height: 'auto',
+    overflow: 'visible',
+    padding: 0,
+    position: 'relative',
+    cursor: (!pages.length && tab === 'text' && textBoxMode === 'empty') ? 'text' : 'default',
+    background: (pages.length > 0 && tab === 'text') ? bg : 'transparent',
+    color:      (pages.length > 0 && tab === 'text') ? ink : 'inherit',
+  };
+
+  function renderPage({ bare = false } = {}) {
     if (!pages.length) return null;
     const pageText = pages[currentPage] || '';
 
     if (pageText.trim().length < 5) {
+      const emptyMsg = (
+        <p style={{ fontFamily: 'var(--font-body)', fontSize: '14px', color: 'var(--ink-mute)', textAlign: 'center', lineHeight: 1.6, margin: 0, maxWidth: '36ch' }}>
+          Esta página no contiene texto seleccionable.<br />
+          Puede ser una imagen, gráfico o página en blanco en el documento original.
+        </p>
+      );
+      if (bare) return (
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'center', minHeight:'160px' }}>
+          {emptyMsg}
+        </div>
+      );
       return (
         <div className="lab-text-body font-body" style={{ ...boxStyle, overflowY: 'auto', outline: 'none', background: bg, color: ink, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <p style={{ fontFamily: 'var(--font-body)', fontSize: '14px', color: 'var(--ink-mute)', textAlign: 'center', lineHeight: 1.6, margin: 0, maxWidth: '36ch' }}>
-            Esta página no contiene texto seleccionable.<br />
-            Puede ser una imagen, gráfico o página en blanco en el documento original.
-          </p>
+          {emptyMsg}
         </div>
       );
     }
@@ -350,7 +382,21 @@ function LabExtendido() {
     });
 
     const visibleParagraphs = blockRead ? [paragraphs[blockIdx]] : paragraphs;
-    const totalSentences = sections.reduce((acc, b) => acc + b.split(/(?<=[.!?])\s+/).filter(Boolean).length, 0);
+
+    const innerContent = (
+      <>
+        {visibleParagraphs}
+        {blockRead && blockIdx < sections.length - 1 && (
+          <button
+            onClick={() => setBlockIdx(i => i + 1)}
+            style={{ marginTop: '1.2em', fontFamily: 'var(--font-body)', fontSize: '13px', padding: '8px 16px', border: '1px solid var(--accent)', color: 'var(--accent)', background: 'transparent', cursor: 'pointer', borderRadius: '2px' }}>
+            Siguiente →
+          </button>
+        )}
+      </>
+    );
+
+    if (bare) return innerContent;
 
     return (
       <div
@@ -362,14 +408,7 @@ function LabExtendido() {
           if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { e.preventDefault(); setSeqIdx(i => Math.max(i - 1, 0)); }
         } : undefined}
         style={{ ...boxStyle, overflowY: 'auto', outline: 'none', background: bg, color: ink }}>
-        {visibleParagraphs}
-        {blockRead && blockIdx < sections.length - 1 && (
-          <button
-            onClick={() => setBlockIdx(i => i + 1)}
-            style={{ marginTop: '1.2em', fontFamily: 'var(--font-body)', fontSize: '13px', padding: '8px 16px', border: '1px solid var(--accent)', color: 'var(--accent)', background: 'transparent', cursor: 'pointer', borderRadius: '2px' }}>
-            Siguiente →
-          </button>
-        )}
+        {innerContent}
       </div>
     );
   }
@@ -378,7 +417,7 @@ function LabExtendido() {
     <>
       {confirmOpen && (
         <ConfirmModal
-          onConfirm={() => { pendingAction && pendingAction(); resetPages(); setConfirmOpen(false); }}
+          onConfirm={() => { pendingAction?.(); setConfirmOpen(false); }}
           onCancel={() => setConfirmOpen(false)}
         />
       )}
@@ -439,25 +478,109 @@ function LabExtendido() {
             </div>
           )}
 
-          {/* Tab: Pegar texto */}
+          {/* Tab: Pegar texto — cuadro único con tres estados */}
           {tab === 'text' && (
-            <div className="mb-6">
-              <textarea
-                className="lab-textarea font-body"
-                style={{ ...boxStyle, minHeight:'200px', resize:'vertical', outline:'none', maxWidth:'100%' }}
-                placeholder="Pegá hasta 8000 caracteres de texto..."
-                maxLength={8000}
-                value={pasted}
-                onChange={e => {
-                  const v = e.target.value;
-                  e.target.style.height = '1px';
-                  e.target.style.height = e.target.scrollHeight + 'px';
-                  handlePasteChange(v);
+            <div className="mb-2">
+
+              {/* ── Cuadro único ── */}
+              <div
+                style={textBoxStyle}
+                aria-live={pages.length > 0 ? 'polite' : undefined}
+                tabIndex={seqRead && pages.length > 0 ? 0 : undefined}
+                onKeyDown={seqRead && pages.length > 0 ? e => {
+                  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); setSeqIdx(i => Math.min(i + 1, totalSentences - 1)); }
+                  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { e.preventDefault(); setSeqIdx(i => Math.max(i - 1, 0)); }
+                } : undefined}
+                onDoubleClick={() => {
+                  if (!pages.length && textBoxMode !== 'editing') setTextBoxMode('editing');
                 }}
-              />
-              <div style={{ fontFamily:'var(--font-body)', fontSize:'12px', color:'var(--ink-mute)', marginTop:'6px', opacity:0.6, textAlign:'right' }}>
-                {pasted.length} / 8000
+              >
+                {/* Estado 1: vacío */}
+                {!pages.length && textBoxMode === 'empty' && (
+                  <div style={{ display:'flex', minHeight:'200px', alignItems:'center', justifyContent:'center', padding:'20px' }}>
+                    <p style={{ fontFamily:'var(--font-body)', fontWeight:300, fontStyle:'italic', color:'var(--ink-mute)', textAlign:'center', maxWidth:'32ch', margin:0, fontSize:'16px' }}>
+                      Hacé doble clic para pegar o escribir tu texto
+                    </p>
+                  </div>
+                )}
+
+                {/* Estado 2: editando */}
+                {!pages.length && textBoxMode === 'editing' && (
+                  <textarea
+                    autoFocus
+                    className="font-body"
+                    style={{
+                      width:'100%', height:'auto', resize:'none',
+                      border:'none', background:'transparent', outline:'none',
+                      fontFamily:'var(--font-body)', fontSize:`${size}px`,
+                      lineHeight:effectiveLH, letterSpacing:effectiveLS,
+                      color:'inherit', padding:'20px', boxSizing:'border-box',
+                      display:'block',
+                    }}
+                    maxLength={8000}
+                    value={pasted}
+                    onChange={e => {
+                      setPasted(e.target.value);
+                      e.target.style.height = 'auto';
+                      e.target.style.height = e.target.scrollHeight + 'px';
+                    }}
+                    onBlur={handleTextBlur}
+                  />
+                )}
+
+                {/* Estado 2 preview: texto ingresado, no transformado */}
+                {!pages.length && textBoxMode === 'preview' && (
+                  <div
+                    style={{
+                      whiteSpace:'pre-wrap',
+                      wordBreak:'break-word', padding:'20px', boxSizing:'border-box',
+                      fontFamily:'var(--font-body)', fontSize:`${size}px`,
+                      lineHeight:effectiveLH, letterSpacing:effectiveLS,
+                    }}
+                    onDoubleClick={() => setTextBoxMode('editing')}
+                  >
+                    {pasted}
+                  </div>
+                )}
+
+                {/* Estado 3: resultado transformado */}
+                {pages.length > 0 && (
+                  <div style={{ padding:'20px', boxSizing:'border-box' }}>
+                    {renderPage({ bare: true })}
+                  </div>
+                )}
               </div>
+
+              {/* Contador debajo del cuadro */}
+              <div style={{ fontFamily:'var(--font-body)', fontSize:'12px', color:'var(--ink-mute)', marginTop:'6px', textAlign:'right', opacity:0.7 }}>
+                {pages.length > 0
+                  ? `${(pages[currentPage]||'').length.toLocaleString('es-AR')} caracteres · Página ${currentPage + 1} de ${pages.length}`
+                  : `${pasted.length} / 8000`}
+              </div>
+
+              {/* Paginación debajo del contador — solo Estado 3 con más de 1 página */}
+              {pages.length > 1 && (
+                <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'6px', marginTop:'16px', flexWrap:'wrap' }}>
+                  <button
+                    onClick={() => navigateToPage(currentPage - 1)}
+                    disabled={currentPage === 0}
+                    style={navBtnStyle(currentPage === 0)}>
+                    ← Anterior
+                  </button>
+                  {getPageNumbers(pages.length, currentPage).map((item, i) =>
+                    item === '...'
+                      ? <span key={`e${i}`} style={{ color:'var(--ink-mute)', fontSize:'12px', padding:'0 2px' }}>…</span>
+                      : <button key={item} onClick={() => navigateToPage(item)} style={pageNumStyle(item === currentPage)}>{item + 1}</button>
+                  )}
+                  <button
+                    onClick={() => navigateToPage(currentPage + 1)}
+                    disabled={currentPage === pages.length - 1}
+                    style={navBtnStyle(currentPage === pages.length - 1)}>
+                    Siguiente →
+                  </button>
+                </div>
+              )}
+
             </div>
           )}
 
@@ -468,16 +591,22 @@ function LabExtendido() {
             </p>
           )}
 
-          {/* Botón procesar + Personalizar lectura */}
+          {/* Botón procesar / editar + Personalizar lectura */}
           <div className="lab-action-row mb-8">
-            <button
-              className={btnBase}
-              disabled={!canProcess}
-              onClick={handleProcess}>
-              {isProcessing ? (
-                status === 'extracting' ? 'Extrayendo texto...' : 'Procesando...'
-              ) : 'Transformar documento →'}
-            </button>
+            {tab === 'text' && pages.length > 0 ? (
+              <button className={btnBase} onClick={handleEditarTexto}>
+                Editar texto ✕
+              </button>
+            ) : (
+              <button
+                className={btnBase}
+                disabled={!canProcess}
+                onClick={handleProcess}>
+                {isProcessing ? (
+                  status === 'extracting' ? 'Extrayendo texto...' : 'Procesando...'
+                ) : 'Transformar documento →'}
+              </button>
+            )}
             {status === 'done' && pages.length > 0 && (
               <button onClick={handleCustomize} className="lab-btn-ext lab-customize-btn">
                 Personalizar lectura
@@ -485,8 +614,8 @@ function LabExtendido() {
             )}
           </div>
 
-          {/* Output */}
-          {pages.length > 0 && (
+          {/* Output — solo para tab "Subir documento" */}
+          {tab === 'upload' && pages.length > 0 && (
             <div ref={outputRef}>
               <hr style={{ border:'none', borderTop:'1px solid var(--line)', margin:'0 0 32px' }} />
 

@@ -7,8 +7,25 @@
 
   <link rel="icon" href="src/logo-cerebro.png" />
 
-  <meta name="description" content="Subí un documento o pegá texto largo y explorá cómo lo procesaría tu mente." />
+  <!-- SEO -->
+  <meta name="description" content="Laboratorio de lectura accesible: subí un PDF o DOCX y explorá ajustes de accesibilidad cognitiva para TDAH, dislexia y neurodivergencia." />
+  <meta name="keywords" content="laboratorio lectura, accesibilidad cognitiva, neurodivergente, TDAH, dislexia, lectura accesible, ajustes tipográficos" />
+  <meta name="author" content="Aylén Frísoli" />
   <meta name="robots" content="noindex" />
+  <link rel="canonical" href="https://bibliodivergente.vercel.app/laboratorio-extendido.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://bibliodivergente.vercel.app/laboratorio-extendido.html" />
+  <meta property="og:title" content="Laboratorio Extendido — BiblioDivergente" />
+  <meta property="og:description" content="Laboratorio de lectura accesible: subí un PDF o DOCX y explorá ajustes de accesibilidad cognitiva para TDAH, dislexia y neurodivergencia." />
+  <meta property="og:image" content="https://bibliodivergente.vercel.app/src/banner.png" />
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Laboratorio Extendido — BiblioDivergente" />
+  <meta name="twitter:description" content="Laboratorio de lectura accesible: subí un PDF o DOCX y explorá ajustes de accesibilidad cognitiva para TDAH, dislexia y neurodivergencia." />
+  <meta name="twitter:image" content="https://bibliodivergente.vercel.app/src/banner.png" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -51,30 +68,26 @@
   <main>
 
     <!-- Hero -->
-    <section style="background: var(--primary); padding: clamp(60px,8vw,100px) 0;">
+    <section class="lab-ext-hero">
       <div class="container">
-        <a href="index.html#laboratorio"
-           style="color: color-mix(in srgb, var(--bg) 70%, transparent); font-family: var(--font-body); font-size: 13px; letter-spacing: 0.02em; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 32px; transition: color 0.15s;"
-           onmouseover="this.style.color='var(--accent-soft)'" onmouseout="this.style.color='color-mix(in srgb, var(--bg) 70%, transparent)'">
-          ← Volver al Laboratorio
-        </a>
-        <h1 style="color: var(--bg); font-family: var(--font-display); font-size: clamp(36px,5vw,64px); font-weight: 400; letter-spacing: -0.015em; line-height: 1.05; max-width: 14ch; margin-bottom: 16px;">
-          Laboratorio <em style="color: var(--accent-soft);">Extendido</em>
+        <a href="index.html#laboratorio" class="lab-ext-back">← Volver al Laboratorio</a>
+        <h1 class="lab-ext-title">
+          Laboratorio <em class="text-accent-soft">Extendido</em>
         </h1>
-        <p style="color: color-mix(in srgb, var(--bg) 72%, transparent); font-family: var(--font-body); font-size: clamp(16px,1.4vw,20px); max-width: 52ch; font-weight: 300; line-height: 1.55;">
+        <p class="lab-ext-desc">
           Subí un documento o pegá texto largo. Explorá cómo lo procesaría tu mente.
         </p>
       </div>
     </section>
 
     <!-- App mount -->
-    <section style="padding: clamp(60px,8vw,100px) 0; background: var(--bg);">
+    <section class="py-[clamp(60px,8vw,100px)] bg-bg">
       <div id="lab-extendido" class="container"></div>
     </section>
 
   </main>
 
-  <footer class="footer pt-20 pb-8 bg-[#AE9372] text-ink">
+  <footer class="footer pt-20 pb-8 bg-bg-sand text-ink">
     <div class="container">
       <div class="grid grid-cols-[2fr_1fr_1fr_1fr] gap-12 mb-16 bp-md:grid-cols-1 bp-md:gap-10">
         <div>
