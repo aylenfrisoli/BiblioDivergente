@@ -97,7 +97,22 @@
   .lab-backdrop[data-open="1"] { display: block; }
 }
 
-/* ── Lab action row (Transformar + Personalizar) ──────────────────────────── */
+/* ── Lab tabs row (tabs + botón transformar) ───────────────────────────────── */
+
+.lab-tabs-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 12px;
+}
+
+@media (max-width: 639px) {
+  .lab-tabs-row { flex-direction: column; align-items: stretch; }
+  .lab-tabs-row > button { width: 100%; justify-content: center; }
+}
+
+/* ── Lab action row (Editar + Personalizar) ────────────────────────────────── */
 
 .lab-action-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 .lab-customize-btn { display: none !important; }
@@ -178,6 +193,7 @@
   border: 2px dashed color-mix(in srgb, var(--accent) 40%, transparent);
   border-radius: 12px;
   padding: 48px 24px;
+  min-height: 240px;
   cursor: pointer;
   text-align: center;
   transition: border-color 0.2s, background 0.2s;

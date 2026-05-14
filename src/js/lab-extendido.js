@@ -110,9 +110,12 @@ function LabExtendido() {
   const [pendingAction, setPendingAction] = useState(null);
   const [asideOpen, setAsideOpen]         = useState(false);
   const [textBoxMode, setTextBoxMode]     = useState('empty'); // 'empty' | 'editing' | 'preview'
-  const fileInputRef = useRef(null);
-  const outputRef    = useRef(null);
-  const asideRef     = useRef(null);
+  const fileInputRef  = useRef(null);
+  const outputRef     = useRef(null);
+  const asideRef      = useRef(null);
+  const textareaRef   = useRef(null);
+  const dropzoneRef   = useRef(null);
+  const [inputBlockH, setInputBlockH] = useState(null);
 
   // Tweaks
   const [size,     setSize]     = useState(17);
@@ -129,6 +132,20 @@ function LabExtendido() {
   const [blockRead, setBlockRead] = useState(false);
   const [blockIdx,  setBlockIdx]  = useState(0);
   const [markConn,  setMarkConn]  = useState(false);
+
+  useEffect(() => {
+    if (dropzoneRef.current) {
+      setInputBlockH(dropzoneRef.current.offsetHeight);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (textBoxMode === 'editing' && textareaRef.current) {
+      const ta = textareaRef.current;
+      ta.style.height = 'auto';
+      ta.style.height = ta.scrollHeight + 'px';
+    }
+  }, [textBoxMode]);
 
   const effectiveLH = maxSpace ? 2.8 : spacing;
   const effectiveLS = maxSpace ? '0.04em' : `${letter}em`;
@@ -301,6 +318,8 @@ function LabExtendido() {
     overflow: 'visible',
     padding: 0,
     position: 'relative',
+    maxWidth: pages.length > 0 ? boxStyle.maxWidth : 'none',
+    minHeight: inputBlockH ? `${inputBlockH}px` : boxStyle.minHeight,
     cursor: (!pages.length && tab === 'text' && textBoxMode === 'empty') ? 'text' : 'default',
     background: (pages.length > 0 && tab === 'text') ? bg : 'transparent',
     color:      (pages.length > 0 && tab === 'text') ? ink : 'inherit',
@@ -427,11 +446,23 @@ function LabExtendido() {
         {/* ── Columna izquierda: input + output ─────────────────────────────────── */}
         <div>
 
-          {/* Tabs */}
-          <div className="flex border border-line rounded-sm overflow-hidden mb-6" style={{ maxWidth: '360px' }}>
-            {[['upload','Subir documento'],['text','Pegar texto']].map(([k, l]) => (
-              <button key={k} className={toggleCls(tab === k)} onClick={() => setTab(k)} style={{ flex:1, padding:'10px 16px', fontSize:'13px' }}>{l}</button>
-            ))}
+          {/* Tabs + botón Transformar */}
+          <div className="lab-tabs-row">
+            <div className="flex border border-line rounded-sm overflow-hidden" style={{ maxWidth: '360px' }}>
+              {[['upload','Subir documento'],['text','Pegar texto']].map(([k, l]) => (
+                <button key={k} className={toggleCls(tab === k)} onClick={() => setTab(k)} style={{ flex:1, padding:'10px 16px', fontSize:'13px' }}>{l}</button>
+              ))}
+            </div>
+            {!(tab === 'text' && pages.length > 0) && (
+              <button
+                className={btnBase}
+                disabled={!canProcess}
+                onClick={handleProcess}>
+                {isProcessing ? (
+                  status === 'extracting' ? 'Extrayendo texto...' : 'Procesando...'
+                ) : 'Transformar documento →'}
+              </button>
+            )}
           </div>
 
           {/* Tab: Subir documento */}
@@ -439,6 +470,7 @@ function LabExtendido() {
             <div className="mb-6">
               {!file ? (
                 <div
+                  ref={dropzoneRef}
                   className="lab-dropzone"
                   data-dragover={isDragOver ? '1' : '0'}
                   onDragOver={e => { e.preventDefault(); setIsDragOver(true); }}
@@ -497,7 +529,7 @@ function LabExtendido() {
               >
                 {/* Estado 1: vacío */}
                 {!pages.length && textBoxMode === 'empty' && (
-                  <div style={{ display:'flex', minHeight:'200px', alignItems:'center', justifyContent:'center', padding:'20px' }}>
+                  <div style={{ position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', padding:'20px' }}>
                     <p style={{ fontFamily:'var(--font-body)', fontWeight:300, fontStyle:'italic', color:'var(--ink-mute)', textAlign:'center', maxWidth:'32ch', margin:0, fontSize:'16px' }}>
                       Hacé doble clic para pegar o escribir tu texto
                     </p>
@@ -507,6 +539,7 @@ function LabExtendido() {
                 {/* Estado 2: editando */}
                 {!pages.length && textBoxMode === 'editing' && (
                   <textarea
+                    ref={textareaRef}
                     autoFocus
                     className="font-body"
                     style={{
@@ -591,28 +624,19 @@ function LabExtendido() {
             </p>
           )}
 
-          {/* Botón procesar / editar + Personalizar lectura */}
-          <div className="lab-action-row mb-8">
-            {tab === 'text' && pages.length > 0 ? (
-              <button className={btnBase} onClick={handleEditarTexto}>
-                Editar texto ✕
-              </button>
-            ) : (
-              <button
-                className={btnBase}
-                disabled={!canProcess}
-                onClick={handleProcess}>
-                {isProcessing ? (
-                  status === 'extracting' ? 'Extrayendo texto...' : 'Procesando...'
-                ) : 'Transformar documento →'}
-              </button>
-            )}
-            {status === 'done' && pages.length > 0 && (
+          {/* Editar texto + Personalizar lectura */}
+          {pages.length > 0 && (
+            <div className="lab-action-row mb-8">
+              {tab === 'text' && (
+                <button className={btnBase} onClick={handleEditarTexto}>
+                  Editar texto ✕
+                </button>
+              )}
               <button onClick={handleCustomize} className="lab-btn-ext lab-customize-btn">
                 Personalizar lectura
               </button>
-            )}
-          </div>
+            </div>
+          )}
 
           {/* Output — solo para tab "Subir documento" */}
           {tab === 'upload' && pages.length > 0 && (
