@@ -100,10 +100,10 @@
 /* ── Lab action row (Transformar + Personalizar) ──────────────────────────── */
 
 .lab-action-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-.lab-customize-btn { display: none; }
+.lab-customize-btn { display: none !important; }
 
 @media (max-width: 639px) {
-  .lab-customize-btn { display: flex; }
+  .lab-customize-btn { display: flex !important; }
   .lab-action-row { flex-direction: column; align-items: stretch; }
   .lab-action-row > button { width: 100%; justify-content: center; }
 }
