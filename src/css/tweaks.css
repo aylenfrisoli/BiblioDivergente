@@ -98,5 +98,6 @@
     transition: transform .28s cubic-bezier(.32,.72,0,1);
   }
   .twk-hd { cursor: default; }
+  .twk-x { width: 44px; height: 44px; font-size: 16px; }
   .twk-backdrop[data-open="1"] { display: block; }
 }

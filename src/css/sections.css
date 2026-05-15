@@ -67,7 +67,7 @@
     position: fixed !important;
     right: 0 !important; top: 0 !important;
     width: min(360px, 88vw);
-    height: 100vh; max-height: 100vh;
+    height: 100dvh; max-height: 100dvh;
     z-index: 1000;
     display: flex !important; flex-direction: column;
     overflow: hidden;

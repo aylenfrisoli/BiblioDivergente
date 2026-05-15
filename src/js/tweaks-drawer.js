@@ -14,6 +14,18 @@ function TweaksDrawer({
   blockRead, setBlockRead,
   markConn, setMarkConn,
 }) {
+  const scrollY = React.useRef(0);
+  React.useEffect(() => {
+    if (variant !== 'drawer') return;
+    if (isOpen) {
+      scrollY.current = window.scrollY;
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+      window.scrollTo(0, scrollY.current);
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isOpen, variant]);
   const toggleCls = active =>
     `flex-1 py-2 px-2.5 border-none font-body text-xs cursor-pointer transition-all duration-150 border-r border-line last:border-r-0 ${active ? 'bg-primary text-bg' : 'bg-transparent text-ink-soft hover:bg-bg-soft'}`;
 

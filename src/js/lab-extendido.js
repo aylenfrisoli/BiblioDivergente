@@ -405,13 +405,6 @@ function LabExtendido() {
     const innerContent = (
       <>
         {visibleParagraphs}
-        {blockRead && blockIdx < sections.length - 1 && (
-          <button
-            onClick={() => setBlockIdx(i => i + 1)}
-            style={{ marginTop: '1.2em', fontFamily: 'var(--font-body)', fontSize: '13px', padding: '8px 16px', border: '1px solid var(--accent)', color: 'var(--accent)', background: 'transparent', cursor: 'pointer', borderRadius: '2px' }}>
-            Siguiente →
-          </button>
-        )}
       </>
     );
 

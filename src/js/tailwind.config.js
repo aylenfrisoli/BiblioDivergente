@@ -11,7 +11,7 @@ tailwind.config = {
       },
       fontFamily: { display: 'var(--font-display)', body: 'var(--font-body)', mono: 'var(--font-mono)' },
       maxWidth: { container: 'var(--container)', 'container-narrow': 'var(--container-narrow)' },
-      screens: { 'bp-sm': { max: '600px' }, 'bp-md': { max: '900px' } },
+      screens: { 'bp-sm': { max: '639px' }, 'bp-md': { max: '900px' } },
       animation: {
         'fade-up':    'fadeUp 0.5s ease both',
         'pulse-soft': 'pulse 2.4s ease-in-out infinite',
